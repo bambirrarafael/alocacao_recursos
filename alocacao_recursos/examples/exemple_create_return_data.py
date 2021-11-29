@@ -21,13 +21,14 @@ for symbol in list_symbols:
     i += 1
     asset_price_df = price_data[price_data["asset"] == symbol]
     if len(asset_price_df) > 0:
-        filtred_asset_price_df = asset_price_df.filter(["Date", "Adj Close", "asset"])
-        filtred_asset_price_df["return"] = filtred_asset_price_df["Adj Close"].pct_change()
-        filtred_asset_price_df.dropna(inplace=True)
-        list_df_returns.append(filtred_asset_price_df)
+        if asset_price_df["Volume"].mean() > 100000:
+            filtred_asset_price_df = asset_price_df.filter(["Date", "Adj Close", "asset"])
+            filtred_asset_price_df["return"] = filtred_asset_price_df["Adj Close"].pct_change()
+            filtred_asset_price_df.dropna(inplace=True)
+            list_df_returns.append(filtred_asset_price_df)
 
 returns_data = pd.concat(list_df_returns)
-returns_data.to_csv("return_data.csv")
+returns_data.to_csv("../price_data/return_data.csv")
 
 print("\n")
 print(" END ! ")

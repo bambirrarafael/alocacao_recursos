@@ -14,20 +14,27 @@ class Portfolio(object):
         self.return_data = return_data
         self.cov_matrix = return_data.cov()
         self.nome_portfolio = nome_portfolio
+        self.period = period
         #
-        self._assets_expected_returns = self.return_data.mean()
-        self.n_assets = len(self._assets_expected_returns)
+
         self._alpha_var = alpha_var
         #
         self.expected_return_by_frame = np.sum(return_data * x, axis=1)
-        self.cumulative_returns = (1 + self.expected_return_by_frame).cumprod()
         #
-        self.expected_return = np.sum(self._assets_expected_returns * self.x)
-        self.volatility = np.sqrt(np.dot(self.x.T, np.dot(self.cov_matrix, self.x))) * np.sqrt(period)
+        self.expected_return = None
+        self.volatility = None
+        self.var = None
+        self.cvar = None
         #
-        self.var, self.cvar = self.calc_var_cvar()
-        self.drawdown = None    # todo, calc drawdown
-        self.sharpe_ratio = None     # todo, calc sharpe
+        # self.drawdown = None    # todo, calc drawdown
+        # self.sharpe_ratio = None     # todo, calc sharpe
+
+    def calc_portfolio_expected_return(self):
+        assets_expected_returns = self.return_data.mean()
+        self.expected_return = np.sum(assets_expected_returns * self.x) * self.period
+
+    def calc_portfolio_volatility(self):
+        self.volatility = np.sqrt(np.dot(self.x.T, np.dot(self.cov_matrix, self.x))) * np.sqrt(self.period)
 
     def calc_var_cvar(self):
         total_frames = len(self.expected_return_by_frame)
@@ -36,9 +43,8 @@ class Portfolio(object):
             cut_position = 1
         sorted_returns = np.array(self.expected_return_by_frame)
         sorted_returns.sort()
-        var = sorted_returns[cut_position]
-        cvar = np.mean(sorted_returns[:cut_position])
-        return var, cvar
+        self.var = sorted_returns[cut_position]
+        self.cvar = np.mean(sorted_returns[:cut_position])
 
     def plot_histogram_portfolio_returns(self):
         fig = px.histogram(self.expected_return_by_frame)
@@ -46,9 +52,10 @@ class Portfolio(object):
         fig.show()
 
     def plot_portfolio_cumulative_returns(self):
+        cumulative_returns = (1 + self.expected_return_by_frame).cumprod()
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=self.cumulative_returns.index,
-                                 y=self.cumulative_returns,
+        fig.add_trace(go.Scatter(x=cumulative_returns.index,
+                                 y=cumulative_returns,
                                  mode='lines',
                                  name='Retorno cumulativo do Portfolio'))
         fig.update_layout(xaxis_title="Tempo", yaxis_title="Retorno (X capital inicial)")
