@@ -12,6 +12,9 @@ list_symbols_br = all_symbols.get_symbols_br()
 for symbol in list_symbols_br:
     symbol = symbol + ".SA"
     list_symbols.append(symbol)
+list_symbols_index = all_symbols.get_symbols_index()
+for symbol in list_symbols_index:
+    list_symbols.append(symbol)
 
 return_data = pd.read_csv("../price_data/return_data.csv")
 
@@ -34,7 +37,7 @@ merged_return_df.to_csv("../price_data/organized_return_data.csv")
 
 print("\n")
 
-price_data = pd.read_csv("../price_data/us_br_stock_data.csv")
+price_data = pd.read_csv("../price_data/us_br_index_stock_data.csv")
 
 first_asset_price_df = price_data[price_data["asset"] == list_symbols[0]]
 filtred_first_asset_price_df = first_asset_price_df.filter(['Date', 'Adj Close'], axis=1)
@@ -48,7 +51,6 @@ for i in range(1, len(list_symbols)):
         filtred_asset_price_df = filtred_asset_price_df.rename({'Adj Close': symbol}, axis=1)
         merged_price_df = pd.merge(merged_price_df, filtred_asset_price_df, how="outer", on="Date")
 
-merged_price_df = merged_price_df.fillna(0)
 merged_price_df.set_index(["Date"], inplace=True)
 merged_price_df = merged_price_df.sort_index()
 merged_price_df.to_csv("../price_data/organized_price_data.csv")

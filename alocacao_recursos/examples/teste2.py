@@ -16,15 +16,15 @@ price_data = price_data.set_index(["Date"])
 # i = return_data.index.get_loc('2020-01-02')
 # return_data = return_data.iloc[i:i+100]
 
-k = np.random.rand(len(return_data.columns))
-x = k / sum(k)
-p1 = Portfolio(x, return_data, nome_portfolio="p1")
+# k = np.random.rand(len(return_data.columns))
+# x = k / sum(k)
+# p1 = Portfolio(x, return_data, nome_portfolio="p1")
 # p1.plot_histogram_portfolio_returns()
 # p1.plot_portfolio_cumulative_returns()
-p1.print_asset_allocation()
+# p1.print_asset_allocation()
 
 # p_analizer.plot_volatility_return([p1], return_data)
-p_analizer.optimize_portfolio(return_data)
+p_analizer.optimize_portfolio(return_data, 10000, price_data)
 
 print("\n")
 print(" END ! ")

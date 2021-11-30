@@ -11,7 +11,11 @@ df_br_1 = pd.read_csv("../price_data/yahoo_br_stock_1.csv")
 df_br_2 = pd.read_csv("../price_data/yahoo_br_stock_2.csv")
 df_br_3 = pd.read_csv("../price_data/yahoo_br_stock_3.csv")
 
-price_data = pd.concat([df_us_1, df_us_2, df_us_3, df_us_4, df_us_5, df_br_1, df_br_2, df_br_3])
-price_data.to_csv("../price_data/us_br_stock_data.csv")
+df_index = pd.read_csv("../price_data/yahoo_index.csv")
+
+price_data = pd.concat([df_us_1, df_us_2, df_us_3, df_us_4, df_us_5, df_br_1, df_br_2, df_br_3, df_index])
+price_data.to_csv("../price_data/us_br_index_stock_data.csv")
+
+
 
 print(" END ! ")

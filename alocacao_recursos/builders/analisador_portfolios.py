@@ -7,7 +7,6 @@ from alocacao_recursos.builders.portfolio_class import Portfolio
 
 
 def optimize_portfolio(return_data, limite_orcamento, price_data):
-    return_data = select_only_br_assets(return_data)
     n_assets = len(return_data.columns)
     x0 = np.ones(n_assets)
     bounds = [(0, 1)] * n_assets
@@ -15,10 +14,21 @@ def optimize_portfolio(return_data, limite_orcamento, price_data):
     print("Optimization start")
     result_return = opt.minimize(fo_portfolio_return, x0, return_data, bounds=bounds, constraints=[const])
     print(str(result_return.fun))
+    p = Portfolio(result_return.x, return_data)
+    p.plot_portfolio_cumulative_returns(return_data["^BVSP"], "^BVSP")
     result_volatility = opt.minimize(fo_portfolio_volatility, x0, return_data, bounds=bounds, constraints=[const])
     print(result_volatility.fun)
     print("\n")
     pass
+
+
+def build_pareto_volatility_return(return_data):
+    n_assets = len(return_data.columns)
+    x0 = np.ones(n_assets)
+    bounds = [(0, 1)] * n_assets
+    const = {'type': 'eq', 'fun': constraint_sum_percentage_equals_one}
+    result_list = []
+
 
 
 def fo_portfolio_return(x, return_data):
@@ -41,16 +51,6 @@ def fo_portfolio_cvar(x, return_data):
 
 def constraint_sum_percentage_equals_one(x):
     return 1 - np.sum(x)
-
-
-def select_only_br_assets(return_data):
-    assets = return_data.columns
-    br_assets = []
-    for i in assets:
-        if i.endswith(".SA"):
-            br_assets.append(i)
-    return_data = return_data[br_assets]
-    return return_data
 
 
 def plot_volatility_return(list_portfolios, return_data, horizonte=1):

@@ -51,13 +51,18 @@ class Portfolio(object):
         fig.update_layout(xaxis_title="Retorno diário (%)", yaxis_title="Frequência")
         fig.show()
 
-    def plot_portfolio_cumulative_returns(self):
+    def plot_portfolio_cumulative_returns(self, comparacao_df, nome_indice):
         cumulative_returns = (1 + self.expected_return_by_frame).cumprod()
+        comparacao_cumulative_returns = (1 + comparacao_df).cumprod()
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=cumulative_returns.index,
                                  y=cumulative_returns,
                                  mode='lines',
                                  name='Retorno cumulativo do Portfolio'))
+        fig.add_trace(go.Scatter(x=comparacao_cumulative_returns.index,
+                                 y=comparacao_cumulative_returns,
+                                 mode='lines',
+                                 name=nome_indice))
         fig.update_layout(xaxis_title="Tempo", yaxis_title="Retorno (X capital inicial)")
         fig.show()
 
