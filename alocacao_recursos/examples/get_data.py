@@ -2,7 +2,7 @@ import alocacao_recursos.builders.historico_precos as hprice
 
 
 time_frame = "D1"
-start = "2011-01-01"
+start = "2020-01-01"
 finish = "2021-11-01"
 
 
