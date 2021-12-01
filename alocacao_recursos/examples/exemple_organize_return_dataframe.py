@@ -33,7 +33,7 @@ for i in range(1, len(list_symbols)):
 merged_return_df = merged_return_df.fillna(0)
 merged_return_df.set_index(["Date"], inplace=True)
 merged_return_df = merged_return_df.sort_index()
-merged_return_df.to_csv("../price_data/organized_return_data.csv")
+merged_return_df.to_csv("../price_data/organized_return_data_s1.csv")
 
 print("\n")
 
@@ -53,6 +53,6 @@ for i in range(1, len(list_symbols)):
 
 merged_price_df.set_index(["Date"], inplace=True)
 merged_price_df = merged_price_df.sort_index()
-merged_price_df.to_csv("../price_data/organized_price_data.csv")
+merged_price_df.to_csv("../price_data/organized_price_data_s1.csv")
 
 print(" END ! ")

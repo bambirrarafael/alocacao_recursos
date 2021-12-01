@@ -6,10 +6,10 @@ import pandas_datareader as pdr
 import alocacao_recursos.price_data.symbols_lists as all_symbols
 
 
-def create_price_csv(start, finish):
+def create_price_csv(start, finish, save_files=False, name_scenario=""):
     list_symbols_us = all_symbols.get_symbols_us()
     if len(list_symbols_us) > 0:
-        print("\n \t --- Getting US stock price data \n")
+        print("\n \t --- Getting "+name_scenario+" US stock price data \n")
         try:
             list_symbols_us.remove("PBR.A.US")
         except:
@@ -19,73 +19,92 @@ def create_price_csv(start, finish):
         except:
             pass
         try:
-            pdr_get_and_save_prices(list_symbols_us, "../price_data/yahoo_us_stock.csv", start, finish)
+            price_us = pdr_get_and_save_prices(list_symbols_us, "../price_data/"+name_scenario+"yahoo_us_stock.csv",
+                                               start, finish, save_files=save_files)
         except:
-            pass
+            price_us = None
     else:
+        price_us = None
         print("\n \t --- No US data to get \n")
     #
     lista_symbols_br = all_symbols.get_symbols_br()
     if len(lista_symbols_br) > 0:
-        print("\n \t --- Getting BR stock price data \n")
+        print("\n \t --- Getting "+name_scenario+" BR stock price data \n")
         try:
-            pdr_get_and_save_prices(lista_symbols_br, "../price_data/yahoo_br_stock.csv", start, finish, us_only=False)
+            price_br = pdr_get_and_save_prices(lista_symbols_br, "../price_data/"+name_scenario+"yahoo_br_stock.csv",
+                                               start, finish, us_only=False,  save_files=save_files)
         except:
-            pass
+            price_br = None
     else:
+        price_br = None
         print("\n \t --- No BR data to get \n")
     #
     lista_symbols_index = all_symbols.get_symbols_index()
     if len(lista_symbols_index) > 0:
-        print("\n \t --- Getting index price data \n")
+        print("\n \t --- Getting "+name_scenario+" index price data \n")
         try:
-            pdr_get_and_save_prices(lista_symbols_index, "../price_data/yahoo_index.csv", start, finish, us_only=False,
-                                    index=True)
+            price_index = pdr_get_and_save_prices(lista_symbols_index, "../price_data/"+name_scenario+"yahoo_index.csv",
+                                                  start, finish, us_only=False, index=True, save_files=save_files)
+        except:
+            price_index = None
+    else:
+        price_index = None
+        print("\n \t --- No Index data to get \n")
+    #
+    print("\n \t --- End of "+name_scenario+" getting data \n")
+    return price_us, price_br, price_index
+
+
+def create_merged_price_df(price_us=None, price_br=None, price_index=None, save_files=False, name_scenario=""):
+    print("\n \t --- Creating merged price DataFrame \n")
+    list_dfs = []
+    if price_us is None:
+        try:
+            df_us_1 = pd.read_csv("../price_data/"+name_scenario+"yahoo_us_stock.csv")
+            list_dfs.append(df_us_1)
         except:
             pass
     else:
-        print("\n \t --- No Index data to get \n")
+        list_dfs.append(price_us)
     #
-    print("\n \t --- End of getting data \n")
-
-
-def create_merged_price_df():
-    print("\n \t --- Creating merged price DataFrame \n")
-    list_dfs = []
-    try:
-        df_us_1 = pd.read_csv("../price_data/yahoo_us_stock.csv")
-        list_dfs.append(df_us_1)
-    except:
-        pass
+    if price_br is None:
+        try:
+            df_br_1 = pd.read_csv("../price_data/"+name_scenario+"yahoo_br_stock.csv")
+            list_dfs.append(df_br_1)
+        except:
+            pass
+    else:
+        list_dfs.append(price_br)
     #
-    try:
-        df_br_1 = pd.read_csv("../price_data/yahoo_br_stock.csv")
-        list_dfs.append(df_br_1)
-    except:
-        pass
+    if price_index is None:
+        try:
+            df_index = pd.read_csv("../price_data/"+name_scenario+"yahoo_index.csv")
+            list_dfs.append(df_index)
+        except:
+            pass
+    else:
+        list_dfs.append(price_index)
     #
-    try:
-        df_index = pd.read_csv("../price_data/yahoo_index.csv")
-        list_dfs.append(df_index)
-    except:
-        pass
-    #
-
-
     price_data = pd.concat(list_dfs)
-    price_data.to_csv("../price_data/us_br_index_stock_data.csv")
+    if save_files:
+        price_data.to_csv("../price_data/"+name_scenario+"us_br_index_stock_data.csv")
     #
-    print("\n \t --- End of creating merged price DataFrame \n")
+    print("\n \t --- End of creating "+name_scenario+" merged price DataFrame \n")
+    return price_data
 
 
-def create_return_csv():
+def create_return_csv(price_data=None, save_files=False, name_scenario=""):
     print("\n \t --- Creating return csv \n")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
     list_symbols = ajustar_nome_list_symbols(list_symbols_us, list_symbols_br, list_symbols_index)
     #
-    price_data = pd.read_csv("../price_data/us_br_index_stock_data.csv")
+    if price_data is None:
+        try:
+            price_data = pd.read_csv("../price_data/"+name_scenario+"us_br_index_stock_data.csv")
+        except:
+            pass
     #
     i = 1
     list_df_returns = []
@@ -103,18 +122,26 @@ def create_return_csv():
                 print(" ----- OUT: " + symbol)
     #
     returns_data = pd.concat(list_df_returns)
-    returns_data.to_csv("../price_data/return_data.csv")
-    print("\n \t --- End of creating return csv \n")
+    if save_files:
+        returns_data.to_csv("../price_data/"+name_scenario+"return_data.csv")
+    print("\n \t --- End of creating "+name_scenario+" return csv \n")
+    return returns_data
 
 
-def create_return_pivot_table_csv():
-    print("\n \t --- Creating return pivot table csv \n")
+def create_return_pivot_table_csv(return_data=None, save_files=False, name_scenario=""):
+    print("\n \t --- Creating "+name_scenario+" return pivot table csv \n")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
     list_symbols = ajustar_nome_list_symbols(list_symbols_us, list_symbols_br, list_symbols_index)
     #
-    return_data = pd.read_csv("../price_data/return_data.csv")
+    flag_no_saved_file = False
+    if return_data is None:
+        flag_no_saved_file = True
+        try:
+            return_data = pd.read_csv("../price_data/"+name_scenario+"return_data.csv")
+        except:
+            pass
     #
     first_asset_return_df = return_data[return_data["asset"] == list_symbols[0]]
     filtred_first_asset_return_df = first_asset_return_df.filter(['Date', 'return'], axis=1)
@@ -130,20 +157,29 @@ def create_return_pivot_table_csv():
             merged_return_df = pd.merge(merged_return_df, filtred_asset_return_df, how="outer", on="Date")
     #
     merged_return_df = merged_return_df.fillna(0)
-    merged_return_df.set_index(["Date"], inplace=True)
+    if flag_no_saved_file:
+        merged_return_df.set_index(["Date"], inplace=True)
     merged_return_df = merged_return_df.sort_index()
-    merged_return_df.to_csv("../price_data/organized_return_data.csv")
-    print("\n \t --- End of creating return pivot table csv \n")
+    if save_files:
+        merged_return_df.to_csv("../price_data/"+name_scenario+"organized_return_data.csv")
+    print("\n \t --- End of creating "+name_scenario+" return pivot table csv \n")
+    return merged_return_df
 
 
-def create_price_pivot_table_csv():
-    print("\n \t --- Creating price pivot table csv \n")
+def create_price_pivot_table_csv(price_data=None, save_files=None, name_scenario=""):
+    print("\n \t --- Creating "+name_scenario+" price pivot table csv \n")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
     list_symbols = ajustar_nome_list_symbols(list_symbols_us, list_symbols_br, list_symbols_index)
     #
-    price_data = pd.read_csv("../price_data/us_br_index_stock_data.csv")
+    flag_no_saved_file = False
+    if price_data is None:
+        flag_no_saved_file = True
+        try:
+            price_data = pd.read_csv("../price_data/"+name_scenario+"us_br_index_stock_data.csv")
+        except:
+            pass
     #
     first_asset_price_df = price_data[price_data["asset"] == list_symbols[0]]
     filtred_first_asset_price_df = first_asset_price_df.filter(['Date', 'Adj Close'], axis=1)
@@ -158,13 +194,16 @@ def create_price_pivot_table_csv():
             filtred_asset_price_df = filtred_asset_price_df.rename({'Adj Close': symbol}, axis=1)
             merged_price_df = pd.merge(merged_price_df, filtred_asset_price_df, how="outer", on="Date")
     #
-    merged_price_df.set_index(["Date"], inplace=True)
+    if flag_no_saved_file:
+        merged_price_df.set_index(["Date"], inplace=True)
     merged_price_df = merged_price_df.sort_index()
-    merged_price_df.to_csv("../price_data/organized_price_data.csv")
-    print("\n \t --- End of creating price pivot table csv \n")
+    if save_files:
+        merged_price_df.to_csv("../price_data/"+name_scenario+"organized_price_data.csv")
+    print("\n \t --- End of creating "+name_scenario+" price pivot table csv \n")
+    return merged_price_df
 
 
-def pdr_get_and_save_prices(list_symbols, file_exit_name, start, finish, us_only=True, index=False):
+def pdr_get_and_save_prices(list_symbols, file_exit_name, start, finish, us_only=True, index=False, save_files=False):
     list_frames = []
     i = 1
     for symbol in list_symbols:
@@ -183,8 +222,10 @@ def pdr_get_and_save_prices(list_symbols, file_exit_name, start, finish, us_only
         except:
             continue
     data = pd.concat(list_frames)
-    data.to_csv(file_exit_name)
+    if save_files:
+        data.to_csv(file_exit_name)
     print("\n End seving " + file_exit_name + "\n")
+    return data
 
 
 def pdr_get_asset_historic_price(symbol, start, finish):

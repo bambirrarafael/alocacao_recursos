@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 class Portfolio(object):
 
-    def __init__(self, x, return_data, period=252, alpha_var=0.05, nome_portfolio=None):
+    def __init__(self, x, return_data, period, alpha_var=0.05, nome_portfolio=None):
         """
 
         :param x: ndarray
@@ -53,17 +53,17 @@ class Portfolio(object):
 
     def plot_portfolio_cumulative_returns(self, comparacao_df, nome_indice):
         cumulative_returns = (1 + self.expected_return_by_frame).cumprod()
-        comparacao_cumulative_returns = (1 + comparacao_df).cumprod()
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=cumulative_returns.index,
                                  y=cumulative_returns,
                                  mode='lines',
                                  name='Retorno cumulativo do Portfolio'))
+        comparacao_cumulative_returns = (1 + comparacao_df).cumprod()
         fig.add_trace(go.Scatter(x=comparacao_cumulative_returns.index,
                                  y=comparacao_cumulative_returns,
                                  mode='lines',
                                  name=nome_indice))
-        fig.update_layout(xaxis_title="Tempo", yaxis_title="Retorno (X capital inicial)")
+        fig.update_layout(xaxis_title="Tempo", yaxis_title="Retorno (Multp. capital inicial)")
         fig.show()
 
     def print_asset_allocation(self):

@@ -89,7 +89,7 @@ def get_symbols_br():
         # "PETR3",
         # "PETR4",
         # "PRIO3",
-        # "PSSA3",
+        "PSSA3",
         # "PTBL3",
         # "QUAL3",
         # "RADL3",
@@ -113,7 +113,7 @@ def get_symbols_br():
         # "UGPA3",
         # "UNIP6",
         # "USIM5",
-        # "VALE3",
+        "VALE3",
         # "VLID3",
         # "VULC3",
         # "WEGE3",
@@ -156,7 +156,7 @@ def get_symbols_br():
         # "TRIS3",
         # "VIVR3",
         "NTCO3",
-        "PCAR3"
+        # "PCAR3"
     ]
     return symbols_bovespa
 
