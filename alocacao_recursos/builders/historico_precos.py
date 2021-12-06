@@ -9,7 +9,7 @@ import alocacao_recursos.price_data.symbols_lists as all_symbols
 def create_price_csv(start, finish, save_files=False, name_scenario=""):
     list_symbols_us = all_symbols.get_symbols_us()
     if len(list_symbols_us) > 0:
-        print("\n \t --- Getting "+name_scenario+" US stock price data \n")
+        print("\n \t --- Getting "+name_scenario+" US stock price data")
         try:
             list_symbols_us.remove("PBR.A.US")
         except:
@@ -25,11 +25,11 @@ def create_price_csv(start, finish, save_files=False, name_scenario=""):
             price_us = None
     else:
         price_us = None
-        print("\n \t --- No US data to get \n")
+        print("\n \t --- No US data to get")
     #
     lista_symbols_br = all_symbols.get_symbols_br()
     if len(lista_symbols_br) > 0:
-        print("\n \t --- Getting "+name_scenario+" BR stock price data \n")
+        print("\n \t --- Getting "+name_scenario+" BR stock price data")
         try:
             price_br = pdr_get_and_save_prices(lista_symbols_br, "../price_data/"+name_scenario+"yahoo_br_stock.csv",
                                                start, finish, us_only=False,  save_files=save_files)
@@ -37,11 +37,11 @@ def create_price_csv(start, finish, save_files=False, name_scenario=""):
             price_br = None
     else:
         price_br = None
-        print("\n \t --- No BR data to get \n")
+        print("\n \t --- No BR data to get")
     #
     lista_symbols_index = all_symbols.get_symbols_index()
     if len(lista_symbols_index) > 0:
-        print("\n \t --- Getting "+name_scenario+" index price data \n")
+        print("\n \t --- Getting "+name_scenario+" index price data")
         try:
             price_index = pdr_get_and_save_prices(lista_symbols_index, "../price_data/"+name_scenario+"yahoo_index.csv",
                                                   start, finish, us_only=False, index=True, save_files=save_files)
@@ -49,14 +49,14 @@ def create_price_csv(start, finish, save_files=False, name_scenario=""):
             price_index = None
     else:
         price_index = None
-        print("\n \t --- No Index data to get \n")
+        print("\n \t --- No Index data to get")
     #
-    print("\n \t --- End of "+name_scenario+" getting data \n")
+    print("\n \t --- End of "+name_scenario+" getting data")
     return price_us, price_br, price_index
 
 
 def create_merged_price_df(price_us=None, price_br=None, price_index=None, save_files=False, name_scenario=""):
-    print("\n \t --- Creating merged price DataFrame \n")
+    print("\n \t --- Creating merged price DataFrame")
     list_dfs = []
     if price_us is None:
         try:
@@ -89,12 +89,12 @@ def create_merged_price_df(price_us=None, price_br=None, price_index=None, save_
     if save_files:
         price_data.to_csv("../price_data/"+name_scenario+"us_br_index_stock_data.csv")
     #
-    print("\n \t --- End of creating "+name_scenario+" merged price DataFrame \n")
+    print("\n \t --- End of creating "+name_scenario+" merged price DataFrame")
     return price_data
 
 
 def create_return_csv(price_data=None, save_files=False, name_scenario=""):
-    print("\n \t --- Creating return csv \n")
+    print("\n \t --- Creating return csv")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
@@ -124,12 +124,12 @@ def create_return_csv(price_data=None, save_files=False, name_scenario=""):
     returns_data = pd.concat(list_df_returns)
     if save_files:
         returns_data.to_csv("../price_data/"+name_scenario+"return_data.csv")
-    print("\n \t --- End of creating "+name_scenario+" return csv \n")
+    print("\n \t --- End of creating "+name_scenario+" return csv")
     return returns_data
 
 
 def create_return_pivot_table_csv(return_data=None, save_files=False, name_scenario=""):
-    print("\n \t --- Creating "+name_scenario+" return pivot table csv \n")
+    print("\n \t --- Creating "+name_scenario+" return pivot table csv")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
@@ -162,12 +162,12 @@ def create_return_pivot_table_csv(return_data=None, save_files=False, name_scena
     merged_return_df = merged_return_df.sort_index()
     if save_files:
         merged_return_df.to_csv("../price_data/"+name_scenario+"organized_return_data.csv")
-    print("\n \t --- End of creating "+name_scenario+" return pivot table csv \n")
+    print("\n \t --- End of creating "+name_scenario+" return pivot table csv")
     return merged_return_df
 
 
 def create_price_pivot_table_csv(price_data=None, save_files=None, name_scenario=""):
-    print("\n \t --- Creating "+name_scenario+" price pivot table csv \n")
+    print("\n \t --- Creating "+name_scenario+" price pivot table csv")
     list_symbols_us = all_symbols.get_symbols_us()
     list_symbols_br = all_symbols.get_symbols_br()
     list_symbols_index = all_symbols.get_symbols_index()
@@ -199,7 +199,7 @@ def create_price_pivot_table_csv(price_data=None, save_files=None, name_scenario
     merged_price_df = merged_price_df.sort_index()
     if save_files:
         merged_price_df.to_csv("../price_data/"+name_scenario+"organized_price_data.csv")
-    print("\n \t --- End of creating "+name_scenario+" price pivot table csv \n")
+    print("\n \t --- End of creating "+name_scenario+" price pivot table csv")
     return merged_price_df
 
 
@@ -224,7 +224,7 @@ def pdr_get_and_save_prices(list_symbols, file_exit_name, start, finish, us_only
     data = pd.concat(list_frames)
     if save_files:
         data.to_csv(file_exit_name)
-    print("\n End seving " + file_exit_name + "\n")
+    print("\n End saving " + file_exit_name)
     return data
 
 
@@ -244,7 +244,7 @@ def mt_get_and_save_prices(list_symbols, file_exit_name, time_frame, start, fini
             list_frames.append(df_price)
     data = pd.concat(list_frames)
     data.to_csv(file_exit_name)
-    print("\n End seving " + file_exit_name + "\n")
+    print("\n End saving " + file_exit_name)
 
 
 def mt_get_asset_historic_price(symbol, time_frame, start, finish, account, password, server):

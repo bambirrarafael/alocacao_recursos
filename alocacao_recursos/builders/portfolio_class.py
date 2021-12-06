@@ -69,5 +69,6 @@ class Portfolio(object):
     def print_asset_allocation(self):
         i = 0
         for asset in self.return_data:
-            print(str(asset) + " :  " + str(self.x[i]) + " %")
+            val = self.x[i] * 100
+            print(str(asset) + " :  " + "%.2f" % val + " %")
             i += 1

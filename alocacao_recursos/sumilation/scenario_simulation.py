@@ -33,7 +33,7 @@ def build_scenario(return_data, nome_scenario, limite_orcamento, price_data, hor
     x0 = np.ones(n_assets)
     bounds = [(0, 1)] * n_assets
     const = {'type': 'eq', 'fun': p_analizer.constraint_sum_percentage_equals_one}
-    print("Optimization start")
+    print(nome_scenario + "    --- Optimization start")
     result_optimal_return = opt.minimize(p_analizer.fo_portfolio_return, x0, (return_data, horizonte_previsao),
                                          bounds=bounds, constraints=const)
     result_optimal_volatility = opt.minimize(p_analizer.fo_portfolio_volatility, x0, (return_data, horizonte_previsao),
@@ -62,7 +62,7 @@ def build_scenario(return_data, nome_scenario, limite_orcamento, price_data, hor
     p_analizer.plot_portfolio_volatility_return(list_front_portfolios, [p_harm], return_data, horizonte_previsao)
     p_harm.plot_portfolio_cumulative_returns(return_data["^BVSP"], "^BVSP")
     #
-    scen = Scenario(return_data, nome_scenario, list_front_portfolios, [p_harm])
+    scen = Scenario(return_data, horizonte_previsao, nome_scenario, list_front_portfolios, [p_harm])
     return scen
 
 

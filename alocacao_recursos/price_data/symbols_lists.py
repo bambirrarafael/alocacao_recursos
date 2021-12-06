@@ -87,7 +87,7 @@ def get_symbols_br():
         # "ODPV3",
         # "OMGE3",
         # "PETR3",
-        # "PETR4",
+        "PETR4",
         # "PRIO3",
         "PSSA3",
         # "PTBL3",
@@ -155,7 +155,7 @@ def get_symbols_br():
         # "TPIS3",
         # "TRIS3",
         # "VIVR3",
-        "NTCO3",
+        # "NTCO3",
         # "PCAR3"
     ]
     return symbols_bovespa

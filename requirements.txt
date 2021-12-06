@@ -3,6 +3,7 @@ numpy
 scipy
 plotly
 requests
+matplotlib
 MetaTrader5
 pandas_datareader
 yfinance
